@@ -26,8 +26,8 @@ const API_KEY = "live_QpQKgFJhhrWbSCyjVnfDsL3St2MB0F8kvmn7MD2VwbUX279yGlEWrSbryb
 
 async function initialLoad() {
 
-  const response = await fetch(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&api_key=${API_KEY}`);
-  const jsonData = await response.json();
+  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&api_key=${API_KEY}`);
+  const jsonData = response.data;
 
   jsonData.forEach(element => {
 
@@ -59,16 +59,31 @@ initialLoad();
 
 async function initializeCarousel() {
   carousel.clear();
-  const response = await fetch(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`);
-  const jsonData = await response.json();
+  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`);
+  const jsonData = response.data;
   console.log(jsonData);
 
-  infoDump.textContent = jsonData[0].breeds[0].description;
+  const div1 = document.createElement("div");
+  div1.innerHTML = `<div><strong>Breed Name:</strong> ${jsonData[0].breeds[0].name}</div>
+                    <div><strong>Lifespan:</strong> ${jsonData[0].breeds[0].life_span} years</div>
+                    <div><strong>Country of Origin:</strong> ${jsonData[0].breeds[0].origin}</div>
+                    <div><strong>Adaptability:</strong> ${jsonData[0].breeds[0].adaptability} / 5</div>
+                    <div><strong>Affection Level:</strong> ${jsonData[0].breeds[0].affection_level} / 5</div>
+                    <div><strong>Child Friendly:</strong> ${jsonData[0].breeds[0].child_friendly} / 5</div>
+                    <div><strong>Dog Friendly:</strong> ${jsonData[0].breeds[0].dog_friendly} / 5</div>
+                    <div><strong>Stranger Friendly:</strong> ${jsonData[0].breeds[0].stranger_friendly} / 5</div>
+                    <div><strong>Energy Level:</strong> ${jsonData[0].breeds[0].energy_level} / 5</div>
+                    <div><strong>Shedding Level:</strong> ${jsonData[0].breeds[0].shedding_level} / 5</div>`;
+  infoDump.appendChild(div1);
+
+  const div2 = document.createElement("div");
+  div2.textContent = jsonData[0].breeds[0].description;
+  infoDump.appendChild(div2);
 
   const linksEl = document.createElement("div");
-  linksEl.innerHTML = `<a href="${jsonData[0].breeds[0].vcahospitals_url}">VCA Hospitals Page</a><br>
-                       <a href="${jsonData[0].breeds[0].vetstreet_url}">Vet Street Page</a><br>
-                       <a href="${jsonData[0].breeds[0].wikipedia_url}">Wikipedia Page</a>`;
+  linksEl.innerHTML = `<a ${jsonData[0].breeds[0].vcahospitals_url ? `target="_blank" href="${jsonData[0].breeds[0].vcahospitals_url}"` : "" }>VCA Hospitals Page</a><br>
+                       <a ${jsonData[0].breeds[0].vetstreet_url ? `target="_blank" href="${jsonData[0].breeds[0].vetstreet_url}"` : "" }>Vet Street Page</a><br>
+                       <a ${jsonData[0].breeds[0].wikipedia_url ? `target="_blank" href="${jsonData[0].breeds[0].vetstreet_url}"` : "" }>Wikipedia Page</a>`;
 
   infoDump.appendChild(linksEl);
   linksEl.style.textAlign = "center";
