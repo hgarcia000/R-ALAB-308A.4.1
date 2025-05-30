@@ -59,9 +59,13 @@ initialLoad();
 
 async function initializeCarousel() {
   carousel.clear();
+  while (infoDump.firstChild) {
+    infoDump.removeChild(infoDump.firstChild);
+  }
+
   const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`);
   const jsonData = response.data;
-  console.log(jsonData);
+  // console.log(jsonData);
 
   const div1 = document.createElement("div");
   div1.innerHTML = `<div><strong>Breed Name:</strong> ${jsonData[0].breeds[0].name}</div>
@@ -117,6 +121,21 @@ breedSelect.addEventListener("change", initializeCarousel);
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
 
+let startTime;
+let endTime;
+let duration;
+
+axios.interceptors.request.use( request => {
+  startTime = new Date().getTime();
+  return request;
+});
+
+axios.interceptors.response.use( response => {
+  endTime = new Date().getTime();
+  duration = endTime - startTime;
+  console.log(`Request took ${duration} ms to complete.`);
+  return response;
+});
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.
  * - The progressBar element has already been created for you.
