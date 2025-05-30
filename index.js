@@ -59,10 +59,21 @@ initialLoad();
 
 async function initializeCarousel() {
   carousel.clear();
-  const response = await fetch(`https://api.thecatapi.com/v1/images/search?limit=5&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`);
+  const response = await fetch(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`);
   const jsonData = await response.json();
   console.log(jsonData);
+
   infoDump.textContent = jsonData[0].breeds[0].description;
+
+  const linksEl = document.createElement("div");
+  linksEl.innerHTML = `<a href="${jsonData[0].breeds[0].vcahospitals_url}">VCA Hospitals Page</a><br>
+                       <a href="${jsonData[0].breeds[0].vetstreet_url}">Vet Street Page</a><br>
+                       <a href="${jsonData[0].breeds[0].wikipedia_url}">Wikipedia Page</a>`;
+
+  infoDump.appendChild(linksEl);
+  linksEl.style.textAlign = "center";
+  linksEl.style.fontSize = "30px";
+
   jsonData.forEach(element => {
     
     const itemClone = carousel.createCarouselItem(element.url,element.breeds[0].name,element.id);
