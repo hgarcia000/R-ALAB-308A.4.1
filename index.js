@@ -1,4 +1,5 @@
 const { Carousel } = bootstrap
+import * as carousel from "./Carousel.js";
 
 // import axios from "axios";
 
@@ -36,7 +37,7 @@ async function initialLoad() {
 
     breedSelect.appendChild(optionEl);
   });
-  
+  initializeCarousel();
 }
 
 initialLoad();
@@ -56,6 +57,21 @@ initialLoad();
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
 
+async function initializeCarousel() {
+  carousel.clear();
+  const response = await fetch(`https://api.thecatapi.com/v1/images/search?limit=5&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`);
+  const jsonData = await response.json();
+  console.log(jsonData);
+  infoDump.textContent = jsonData[0].breeds[0].description;
+  jsonData.forEach(element => {
+    
+    const itemClone = carousel.createCarouselItem(element.url,element.breeds[0].name,element.id);
+    carousel.appendCarousel(itemClone);
+    
+  });
+  carousel.start();
+}
+breedSelect.addEventListener("change", initializeCarousel);
 /**
  * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
  */
