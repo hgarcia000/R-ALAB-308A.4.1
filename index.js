@@ -26,7 +26,9 @@ const API_KEY = "live_QpQKgFJhhrWbSCyjVnfDsL3St2MB0F8kvmn7MD2VwbUX279yGlEWrSbryb
 
 async function initialLoad() {
 
-  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&api_key=${API_KEY}`);
+  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&api_key=${API_KEY}`, {
+    onDownloadProgress: progressEvent => updateProgess(progressEvent)
+  });
   const jsonData = response.data;
 
   jsonData.forEach(element => {
@@ -63,7 +65,9 @@ async function initializeCarousel() {
     infoDump.removeChild(infoDump.firstChild);
   }
 
-  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`);
+  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&breed_ids=${breedSelect.value}&api_key=${API_KEY}`, {
+    onDownloadProgress: progressEvent => updateProgess(progressEvent)
+  });
   const jsonData = response.data;
   // console.log(jsonData);
 
@@ -127,12 +131,16 @@ let duration;
 
 axios.interceptors.request.use( request => {
   startTime = new Date().getTime();
+  progressBar.style.width = "0%";
+  document.body.style.cursor = "progress";
   return request;
 });
 
 axios.interceptors.response.use( response => {
   endTime = new Date().getTime();
   duration = endTime - startTime;
+  console.log(response)
+  document.body.style.cursor = "";
   console.log(`Request took ${duration} ms to complete.`);
   return response;
 });
@@ -151,7 +159,12 @@ axios.interceptors.response.use( response => {
  *   once or twice per request to this API. This is still a concept worth familiarizing yourself
  *   with for future projects.
  */
-
+function updateProgess(progressEvent) {
+  const percent = progressEvent.bytes / progressEvent.event.loaded * 100;
+  progressEvent.progress = percent;
+  progressBar.style.width = `${progressEvent.progress}%`
+  console.log(progressEvent);
+}
 /**
  * 7. As a final element of progress indication, add the following to your axios interceptors:
  * - In your request interceptor, set the body element's cursor style to "progress."
