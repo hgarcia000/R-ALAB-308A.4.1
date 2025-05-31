@@ -24,6 +24,11 @@ const API_KEY = "live_QpQKgFJhhrWbSCyjVnfDsL3St2MB0F8kvmn7MD2VwbUX279yGlEWrSbryb
  * This function should execute immediately.
  */
 
+const headers = {
+    "Content-Type": "application/json",
+    "x-api-key": API_KEY,
+  };
+
 async function initialLoad() {
 
   const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&has_breeds=1&api_key=${API_KEY}`, {
@@ -69,7 +74,7 @@ async function initializeCarousel() {
     onDownloadProgress: progressEvent => updateProgess(progressEvent)
   });
   const jsonData = response.data;
-  // console.log(jsonData);
+  console.log(jsonData);
 
   const div1 = document.createElement("div");
   div1.innerHTML = `<div><strong>Breed Name:</strong> ${jsonData[0].breeds[0].name}</div>
@@ -183,6 +188,41 @@ function updateProgess(progressEvent) {
  */
 export async function favourite(imgId) {
   // your code here
+  console.log(imgId);
+  let isFav = false;
+
+  const favList = await axios.get(`https://api.thecatapi.com/v1/favourites?image_id=${imgId}`, {
+    headers: headers,
+    onDownloadProgress: progressEvent => updateProgess(progressEvent)
+  });
+  const listData = favList.data;
+  console.log(listData);
+  if (listData.length > 0) {
+    listData.forEach(element => {
+      if (element.image_id === imgId) {
+        isFav = true;
+      }
+    });
+  }
+
+  const requestBody = {
+    "image_id": imgId
+  };
+
+  if (!isFav) {
+    const newFav = await axios.post("https://api.thecatapi.com/v1/favourites", 
+      requestBody, {
+      headers: headers,
+      onDownloadProgress: progressEvent => updateProgess(progressEvent)
+    });
+    console.log(newFav);
+  } else {
+      console.log(listData[0].id);
+    await axios.delete(`https://api.thecatapi.com/v1/favourites/${listData[0].id}`, {
+      headers: headers,
+      onDownloadProgress: progressEvent => updateProgess(progressEvent)
+    });
+  }
 }
 
 /**
