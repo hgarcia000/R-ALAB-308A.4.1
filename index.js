@@ -14,6 +14,7 @@ const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
 const API_KEY = "live_QpQKgFJhhrWbSCyjVnfDsL3St2MB0F8kvmn7MD2VwbUX279yGlEWrSbryb907yyV";
+const sub_id = "user632146";
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -206,7 +207,8 @@ export async function favourite(imgId) {
   }
 
   const requestBody = {
-    "image_id": imgId
+    "image_id": imgId,
+    "sub_id": sub_id
   };
 
   if (!isFav) {
@@ -234,6 +236,30 @@ export async function favourite(imgId) {
  *    If that isn't in its own function, maybe it should be so you don't have to
  *    repeat yourself in this section.
  */
+
+async function getFavourites() {
+  carousel.clear();
+  while (infoDump.firstChild) {
+    infoDump.removeChild(infoDump.firstChild);
+  }
+
+  const favList = await axios.get(`https://api.thecatapi.com/v1/favourites?sub_id=${sub_id}`, {
+    headers: headers,
+    onDownloadProgress: progressEvent => updateProgess(progressEvent)
+  });
+  const favListData = favList.data;
+  console.log(favListData);
+
+  favListData.forEach(element => {
+    
+    const itemClone = carousel.createCarouselItem(element.image.url,element.image_id,element.image_id);
+    carousel.appendCarousel(itemClone);
+    
+  });
+
+}
+
+getFavouritesBtn.addEventListener("click", getFavourites);
 
 /**
  * 10. Test your site, thoroughly!
