@@ -80,6 +80,7 @@ async function initializeCarousel() {
   const div1 = document.createElement("div");
   div1.innerHTML = `<div><strong>Breed Name:</strong> ${jsonData[0].breeds[0].name}</div>
                     <div><strong>Lifespan:</strong> ${jsonData[0].breeds[0].life_span} years</div>
+                    <div><strong>Temperment:</strong> ${jsonData[0].breeds[0].temperament}</div>
                     <div><strong>Country of Origin:</strong> ${jsonData[0].breeds[0].origin}</div>
                     <div><strong>Adaptability:</strong> ${jsonData[0].breeds[0].adaptability} / 5</div>
                     <div><strong>Affection Level:</strong> ${jsonData[0].breeds[0].affection_level} / 5</div>
