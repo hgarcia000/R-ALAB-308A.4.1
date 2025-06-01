@@ -167,7 +167,7 @@ axios.interceptors.response.use( response => {
  *   with for future projects.
  */
 function updateProgess(progressEvent) {
-  const percent = progressEvent.bytes / progressEvent.event.loaded * 100;
+  const percent = progressEvent.event.loaded / progressEvent.bytes * 100;
   progressEvent.progress = percent;
   progressBar.style.width = `${progressEvent.progress}%`
   console.log(progressEvent);
